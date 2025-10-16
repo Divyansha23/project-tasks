@@ -1,6 +1,6 @@
-const sdk = require("node-appwrite");
+import * as sdk from "node-appwrite";
 
-module.exports = async function (req, res) {
+export default async function (req, res) {
   const client = new sdk.Client()
     .setEndpoint(process.env.APPWRITE_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
@@ -19,4 +19,4 @@ module.exports = async function (req, res) {
   } catch (err) {
     res.json({ users: [], error: err.message });
   }
-};
+}
