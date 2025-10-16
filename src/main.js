@@ -1,6 +1,6 @@
 import * as sdk from "node-appwrite";
 
-export default async function (req, res) {
+export default async ({ req, res, log, error }) => {
   const client = new sdk.Client()
     .setEndpoint(process.env.APPWRITE_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
@@ -11,12 +11,15 @@ export default async function (req, res) {
   try {
     const result = await users.list();
     // Only return safe user info (e.g. id, email)
-    const safeUsers = result.users.map(u => ({
+    const safeUsers = result.users.map((u) => ({
       $id: u.$id,
-      email: u.email
+      email: u.email,
     }));
-    res.json({ users: safeUsers });
+
+    // ✅ Use `return res.json()` (Appwrite runtime expects a returned response)
+    return res.json({ users: safeUsers });
   } catch (err) {
-    res.json({ users: [], error: err.message });
+    error(err.message); // Log the error to Appwrite console
+    return res.json({ users: [], error: err.message });
   }
-}
+};
